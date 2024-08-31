@@ -1,9 +1,11 @@
 import "./App.css";
 import Home from "./screens/Home";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./screens/Login";
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import SignUp from "./screens/SignUp";
+import MyCart from "./components/MyCart";
+import MyOrders from "./components/MyOrders";
 
 function App() {
   return (
@@ -12,7 +14,11 @@ function App() {
         <Routes>
           <Route exact path="/" element={<Home/>}/>
           <Route exact path="/login" element={<Login/>}/>
-          <Route exact path="/creatuser" element={<SignUp/>}/>
+          <Route exact path="/createuser" element={<SignUp/>}/>
+          <Route exact path="/my-cart" element={<MyCart />} />
+          <Route exact path="/my-orders" element={<MyOrders />} />
+
+
         </Routes>
       </div>
     </Router>

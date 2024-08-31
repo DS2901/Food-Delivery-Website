@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function SignUp() {
   const [credentials, setCredentials] = useState({
@@ -24,10 +25,10 @@ export default function SignUp() {
           location: credentials.geolocation,
         }),
       });
-  
+
       const json = await response.json();
-      console.log("json"+JSON.stringify(json));
-  
+      console.log("json" + JSON.stringify(json));
+
       if (!json.success) {
         alert(`Error: ${json.message || "Enter Valid Credentials"}`);
       } else {
@@ -38,15 +39,15 @@ export default function SignUp() {
       alert("An unexpected error occurred. Please try again later.");
     }
   };
-  
 
   const onChange = (event) => {
     setCredentials({ ...credentials, [event.target.name]: event.target.value });
   };
 
   return (
-    <div>
-      <div className="container">
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <div className="card shadow-sm p-4" style={{ width: '100%', maxWidth: '400px' }}>
+        <h2 className="text-center mb-4">Sign Up</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
@@ -58,6 +59,7 @@ export default function SignUp() {
               name="name"
               value={credentials.name}
               onChange={onChange}
+              required
             />
           </div>
           <div className="mb-3">
@@ -72,6 +74,7 @@ export default function SignUp() {
               name="email"
               value={credentials.email}
               onChange={onChange}
+              required
             />
           </div>
           <div className="mb-3">
@@ -85,6 +88,7 @@ export default function SignUp() {
               name="password"
               value={credentials.password}
               onChange={onChange}
+              required
             />
           </div>
           <div className="mb-3">
@@ -97,13 +101,14 @@ export default function SignUp() {
               name="geolocation"
               value={credentials.geolocation}
               onChange={onChange}
+              required
             />
           </div>
 
-          <button type="submit" className="m-3 btn btn-success">
+          <button type="submit" className="btn btn-success w-100 mb-3">
             Submit
           </button>
-          <Link to="/login" className="m-3 btn btn-danger">
+          <Link to="/login" className="btn btn-danger w-100">
             Already a user
           </Link>
         </form>

@@ -1,10 +1,9 @@
 const express = require("express");
 const connectToMongoDB = require("./db");
 const cors = require('cors');
-
-
 const app = express();
 const port = 5000;
+
 app.use(cors());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -20,6 +19,8 @@ connectToMongoDB();
 app.use(express.json());
 
 app.use("/api", require("./routes/CreateUser"));
+app.use("/api", require("./routes/DisplayData"));
+app.use("/api", require("./routes/Cart")); // Add this line to include cart routes
 
 app.get("/", (req, res) => {
   res.send("Hello, my name is Devesh");

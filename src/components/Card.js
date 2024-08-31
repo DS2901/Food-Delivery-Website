@@ -1,37 +1,86 @@
-import React from 'react'
+import React, { useState, useContext } from "react";
+import { CartContext } from "./CartContext";
 
-export default function Card() {
+export default function Card(props) {
+  const { addToCart } = useContext(CartContext); // Use the CartContext
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [selectedOption, setSelectedOption] = useState(Object.keys(props.options[0])[0]);
+
+  const options = props.options[0];
+  const priceOptions = Object.keys(options);
+
+  const handleQuantityChange = (event) => {
+    setSelectedQuantity(Number(event.target.value));
+  };
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const handleAddToCart = () => {
+    const cartItem = {
+      item: props.item,
+      option: selectedOption,
+      quantity: selectedQuantity,
+      price: options[selectedOption],
+      totalPrice: selectedQuantity * options[selectedOption],
+      img: props.image, // Add the image to the cart item
+    };
+    addToCart(cartItem); // Add the item to the cart
+    console.log(`Added ${selectedQuantity} of ${props.item} (${selectedOption}) to the cart.`);
+  };
+
+  const totalPrice = selectedQuantity * (Number(options[selectedOption]) || 0);
+
   return (
-    <div>
-        <div className="card mt-3" style={{ width: "18rem", maxHeight: "360px" }}>
-          <img src='https://images.unsplash.com/photo-1528830984461-4d5c3cc1abf0?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' className="card-img-top" alt="Card image cap" />
-          <div className="card-body">
-            <h5 className="card-title">Card title</h5>
-            <p className="card-text">
-              this si some important text
-            </p>
-            <div className="container w-100">
-                <select className="m-2 h-100  bg-success rounded">
-                    {Array.from(Array(6),(e,i)=>{
-                        return(
-                            <option key={i+1} value={i+1}>
-                                {i+1}
-                            </option>
-                        )
-                    })}
-                </select>
-
-                <select className="m-2 h-100  bg-success rounded">
-                    <option value="half">Half</option>
-                    <option value="full">Full</option>
-
-                </select>
-                <div className="d-inline w-100">
-                    Total Price
-                </div>
-            </div>
+    <div className="card mt-3" style={{ width: "18rem" }}>
+      <img
+        src={props.image}
+        className="card-img-top"
+        alt="Product"
+        style={{ height: "180px", objectFit: "cover" }}
+      />
+      <div className="card-body d-flex flex-column">
+        <h5 className="card-title">{props.item}</h5>
+        <p className="card-text">{props.description}</p>
+        <div className="mt-auto">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <select
+              className="form-select me-2"
+              style={{ width: "45%" }}
+              onChange={handleQuantityChange}
+              value={selectedQuantity}
+            >
+              {Array.from(Array(6), (e, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </select>
+            <select
+              className="form-select"
+              style={{ width: "45%" }}
+              onChange={handleOptionChange}
+              value={selectedOption}
+            >
+              {priceOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
           </div>
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <span className="fw-bold">Price: ₹{totalPrice.toFixed(2)}</span>
+          </div>
+          <button
+            className="btn btn-success w-100"
+            onClick={handleAddToCart}
+          >
+            Add to cart
+          </button>
         </div>
+      </div>
     </div>
-  )
+  );
 }

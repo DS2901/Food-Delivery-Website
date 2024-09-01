@@ -20,7 +20,8 @@ app.use(express.json());
 
 app.use("/api", require("./routes/CreateUser"));
 app.use("/api", require("./routes/DisplayData"));
-app.use("/api", require("./routes/Cart")); // Add this line to include cart routes
+app.use("/api/cart", require("./routes/CartRoutes")); 
+app.use('/api', require('./routes/refreshTokenRoutes'));
 
 app.get("/", (req, res) => {
   res.send("Hello, my name is Devesh");

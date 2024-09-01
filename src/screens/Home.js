@@ -9,31 +9,69 @@ export default function Home() {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [search, setSearch] = useState('');
 
-  const loadData = async () => {
+  // Fetch data from the server
+  const fetchData = async () => {
+    let token = localStorage.getItem('token'); // Retrieve token from storage
+
     try {
-      let response = await fetch("http://localhost:5000/api/foodData", {
+      const response = await fetch("http://localhost:5000/api/foodData", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Cache-Control": "no-cache", // Prevent caching
+          "Authorization": `Bearer ${token}`
         },
       });
 
-      let data = await response.json();
+      if (response.status === 403) {
+        // Token might be expired, so refresh token
+        token = await refreshAccessToken(token);
+        localStorage.setItem('token', token);
 
-      // Check the data received
-      console.log("Fetched Data:", data);
+        // Retry the request with the new token
+        const retryResponse = await fetch("http://localhost:5000/api/foodData", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache", // Prevent caching
+            "Authorization": `Bearer ${token}`
+          },
+        });
 
-      // Update state with the fetched data
-      setFoodCategory(data.food_category || []);
-      setFoodItem(data.food_items || []);
+        const data = await retryResponse.json();
+        setFoodCategory(data.food_category || []);
+        setFoodItem(data.food_items || []);
+      } else {
+        const data = await response.json();
+        setFoodCategory(data.food_category || []);
+        setFoodItem(data.food_items || []);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
+  // Refresh access token
+  const refreshAccessToken = async (oldToken) => {
+    const response = await fetch('http://localhost:5000/api/refresh-token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ token: oldToken })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.token;
+    } else {
+      throw new Error('Failed to refresh token');
+    }
+  };
+
+  // Load data when the component mounts
   useEffect(() => {
-    loadData();
+    fetchData();
   }, []); // Run this effect only once on component mount
 
   // Handle option change for a particular item

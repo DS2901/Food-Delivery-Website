@@ -1,16 +1,12 @@
-// src/components/CartContext.js
-import React, { createContext, useReducer, useEffect } from 'react';
+import React, { createContext, useReducer } from 'react';
 
-// Create CartContext
 export const CartContext = createContext();
 
-// Define initial state
 const initialState = {
-  cartItems: JSON.parse(localStorage.getItem('cartItems')) || [],
-  orders: JSON.parse(localStorage.getItem('orders')) || [],
+  cartItems: [],
+  orders: [],
 };
 
-// Define reducer function
 const cartReducer = (state, action) => {
   switch (action.type) {
     case 'ADD_TO_CART':
@@ -39,18 +35,8 @@ const cartReducer = (state, action) => {
   }
 };
 
-// Create CartProvider to wrap around components that need access to cart
 export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
-
-  // Save cartItems and orders to localStorage
-  useEffect(() => {
-    localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
-  }, [state.cartItems]);
-
-  useEffect(() => {
-    localStorage.setItem('orders', JSON.stringify(state.orders));
-  }, [state.orders]);
 
   const addToCart = (item) => {
     dispatch({ type: 'ADD_TO_CART', payload: item });
@@ -62,12 +48,10 @@ export const CartProvider = ({ children }) => {
 
   const placeOrder = () => {
     dispatch({ type: 'PLACE_ORDER' });
-    localStorage.removeItem('cartItems'); // Clear cartItems from localStorage
   };
 
   const clearCart = () => {
     dispatch({ type: 'CLEAR_CART' });
-    localStorage.removeItem('cartItems'); // Clear cartItems from localStorage
   };
 
   return (
